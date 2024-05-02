@@ -1,7 +1,7 @@
 ﻿#SingleInstance Force
 #Requires AutoHotkey v2+
 ;===============================================================================
-; This is the wtSettings code.	By Kunkel321 4-30-2024							
+; This is the wtSettings code.	By Kunkel321 5-2-2024							
 ; These are the settings for the WayText application. 				
 ; The script file is not a "stand alone" tool -- the folder and ini files are needed. 
 ; Setting values are added via this Gui, then saved to the ini, then read by WayText.
@@ -39,7 +39,7 @@ varFri := IniRead(settingsFile, "schedule", "Friday")
 ; varSat := IniRead(settingsFile, "schedule", "Saturday")
 ; varSun := IniRead(settingsFile, "schedule", "Sunday")
 varMemoryMinutes := IniRead(settingsFile, "MainSettings", "MemoryMinutes", "60")
-varDefName  := IniRead(settingsFile, "MainSettings", "defaultStuName", "Student")
+varDefName  := IniRead(settingsFile, "MainSettings", "defaultName", "Student")
 varMyColors := IniRead(settingsFile, "ColorsList")
 
 ;======Set color names and hex codes from above ini values=====================
@@ -164,9 +164,8 @@ Else
 	EditorLBL := varFaveEditor
 
 wts.Add("text", , EditorLBL)
-(buttChooseEditor := wts.add("button", "section", "Choose Different Editor")).OnEvent("Click", ChooseEditorFunc)
+(buttChooseEditor := wts.add("button", , "Choose Different Editor")).OnEvent("Click", ChooseEditorFunc)
 (buttUseSciTE := wts.add("button", , "Use Embeded SciTE")).OnEvent("Click", UseSciteFunc)
-
 ChooseEditorFunc(*)
 {	SelectedEditor := FileSelect(3, "", "Choose favorite editor", "Application (*.exe)")
 	if (SelectedEditor = "")
@@ -182,15 +181,18 @@ UseSciteFunc(*)
 		MsgBox("Scintilla Text Editor (SciTE) not found bundled with WayText.", "WayText Settings", 4096)
 	Reload()
 }
+wts.setFont("underline")
+wts.Add('text', 'cBlue x+20', 'Info about SciTE').OnEvent('click', (*) => MsgBox("From SciTE help file: `"SciTE distribution designed for AutoHotkey - made by fincs - Original SciTE made by Neil Hodgson.`"`n`nYou can get the Scintilla Text Editor for AHK (SciTE4AHK) from the AutoHotkey website.",,4096+64))
+wts.setFont("norm")
 
-wts.Add("Text", "Wrap  w340", "The Definitions and the Offices configuation (ini) files can also be opened from here. Click to open.")
+wts.Add("Text", "Wrap w340 x30 y224", "The Definitions and the Offices configuation (ini) files can also be opened from here. Click to open.")
 wts.Add("Button", "section", "List of Offices").OnEvent("Click", (*) => Run("wtFiles\OfficeList.ini"))
 ; wts.Add("Button", "xp+24 yp+80 section", "List of Offices").OnEvent("Click", (*) => Run("wtFiles\OfficeList.ini"))
 wts.Add("Button", , "List of Boilerplate (Definition Library) Entries").OnEvent("Click", (*) => Run("wtFiles\TextDefinitions.ini"))
 
 ;###############################################################################################
 Tab.UseTab(4) ;####### TARGETS ########################################
-wts.Add("Text", "Wrap  w340", "`"Preferred`" target windows are those that you intend to send text input to.  It is easy (and frustrating) to accidentally send a bunch of key presses to the wrong window, or to the desktop. Enter a list of preferred windows, separated by comma space to help prevent this. RegEx partial-match rules used to identify windows by their titles.")
+wts.Add("Text", "Wrap  w340", "`"Preferred`" target windows are those that you intend to send text input to.  Enter a list of preferred windows, separated by comma space to help prevent this. RegEx partial-match rules used to identify windows by their titles. Note: `".*`" (dot asterisk) matches everything.")
 varTargetWins := StrReplace(varTargetWins, "|", ", ") ; Comment-out this, if you prefer the|list|like|this.
 
 wtsTargetWins := wts.Add("Edit", "+wrap  w340 h42 cBlack  Background" varListColorCode, varTargetWins)
@@ -405,23 +407,19 @@ IniWrites(closeOrNot)
 	; IniWrite(varSunBld.Value, settingsFile, "schedule", "Sunday")
 		;======= Tab 7 Prefill ===========================
 	IniWrite(wtsMemoryEdit.Value, settingsFile, "MainSettings", "MemoryMinutes")
-	IniWrite(wtsDefaultName.Value, settingsFile, "MainSettings", "defaultStuName")
+	IniWrite(wtsDefaultName.Value, settingsFile, "MainSettings", "defaultName")
 		;======= Tab 8 Tips ==============================
 	; No settings to save for tab 8...
 
-	; Reload WayText in RAM and show its main form, when appropriate. 
-	If WinExist("WayText") 
-	{ 	Run A_ScriptDir "\WayText.exe"
-		While not processExist("WayText.exe")
-			Sleep 50
-		If closeOrNot = "Apply" ; Which button called this function?
-		{	sleep 800
-			Send '"' varHotKey '"' ;"!+w"  ;	
-		}
-	}
+	; Reload WayText in RAM (and press hotkey, when appropriate.)
+	Run A_ScriptDir "\WayText.exe"
 
-	If (closeOrNot = "ApplyNClose") { ; Which button called this function?
-		Run A_ScriptDir "\WayText.exe" ; Run but don't open.
-		wts.Destroy()
-	} 
+	If WinActive("WayText Application") and closeOrNot = "Apply"
+	{	While not processExist("WayText.exe")
+			Sleep 50 ; Wait for it to be running again before trying the hotkey. 
+		sleep 800 ; Wait more, just to be safe.
+		Send '"' varHotKey '"'
+	}
+	wts.Destroy() ; Destroy settings form.
+	
 }

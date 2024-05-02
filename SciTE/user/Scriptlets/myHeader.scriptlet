@@ -1,0 +1,7 @@
+﻿#NoEnv ; For security
+#SingleInstance force
+#Persistent
+
+^+r::
+Reload
+return

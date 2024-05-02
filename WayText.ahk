@@ -4,7 +4,7 @@ SetTitleMatchMode("RegEx")
 #Requires AutoHotkey v2.0
 Persistent
 ;===============================================================================
-; This is the WayText application code. By Kunkel321 4-30-2024							
+; This is the WayText application code. By Kunkel321 5-2-2024					
 ; Optimized for web-entry of third person narratives.
 ; Uses ini files in an unorthodox way, as quasi databases.
 ; The script file is not a "stand alone" tool -- the folder and ini files are needed. 
@@ -145,7 +145,7 @@ varFontColorCode := SubStr(varFontColor, -6)
 
 ; ---- create gui object ----
 
-wt := Gui(, 'WayText') ; Settings app uses this, so don't change name. 
+wt := Gui(, 'WayText Application') ; Settings app uses this, so don't change name. 
 wtHwnd := wt.Hwnd	
 wt.Opt("-MinimizeBox +alwaysOnTop")
 wt.SetFont("s11 c" varFontColorCode)
