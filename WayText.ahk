@@ -61,7 +61,7 @@ goToSection(*)
 	}
 }
 
-#HotIf WinActive("WayText",) ; Can't use A_Var here.
+#HotIf WinActive("WayText Application",) ; Can't use A_Var here.
 ^s:: ; When you press Ctrl+s, this scriptlet will save the file, then reload it to RAM.
 {	Send("^s") ; Save me.
 	;MsgBox("Reloading...", "", "T0.3")
