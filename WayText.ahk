@@ -44,12 +44,12 @@ goToSection(*)
 		; -----------------------------------------------
 		;Next steps are for Steve's custom keyboard shortcuts in EditPad Pro...  The ini Sections are 
 		;individually manually folded, so fold them all, then unfold the one I want to see. 
-		Sleep 200 
-		SendInput "!^{F3}" ; custom changed from ctrl+F3.   <---- Only for Steve's setup in EditPadPro
-		Sleep 100
-		SendInput "^+{F8}" ; custom assigned to Fold All.   <---- Only for Steve's setup in EditPadPro
-		Sleep 100
-		SendInput "!^+{F8}" ; custom assigned to Unfold.   <---- Only for Steve's setup in EditPadPro
+		;Sleep 200 
+		;SendInput "!^{F3}" ; custom changed from ctrl+F3.   <---- Only for Steve's setup in EditPadPro
+		;Sleep 100
+		;SendInput "^+{F8}" ; custom assigned to Fold All.   <---- Only for Steve's setup in EditPadPro
+		;Sleep 100
+		;SendInput "!^+{F8}" ; custom assigned to Unfold.   <---- Only for Steve's setup in EditPadPro
 		; -----------------------------------------------
 	}
 	If ErrorLevel {
