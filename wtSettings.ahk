@@ -1,4 +1,4 @@
-﻿#SingleInstance Force
+#SingleInstance Force
 #Requires AutoHotkey v2+
 ;===============================================================================
 ; This is the wtSettings code.	By Kunkel321 5-2-2024							
@@ -360,9 +360,9 @@ tipTabMore(*)
 Tab.UseTab() ;###### END OF TABS #########################################
 
 ;======Add bottom part of Gui==========
-wts.Add("Button", "w106 h30 Section", "Apply").OnEvent("click", (*) => IniWrites("Apply"))
-wts.Add("Button", "ys w136 h30", "Apply Then Close").OnEvent("click", (*) => IniWrites("ApplyNClose"))
-wtsButtonCancel := wts.Add("Button", "ys w106 h30", "Cancel").OnEvent('click', exitSettings)
+wts.Add("Button", "w96 h30 Section", "Apply").OnEvent("click", (*) => IniWrites("Apply"))
+wts.Add("Button", "ys w158 h30", "Apply Then Close").OnEvent("click", (*) => IniWrites("ApplyNClose"))
+wtsButtonCancel := wts.Add("Button", "ys w96 h30", "Cancel").OnEvent('click', exitSettings)
 wts.Title := "wtSettings"
 ;=======Display/Open the main form=======
 wts.Show("x" . wtsX . " y" . wtsY)
@@ -410,16 +410,18 @@ IniWrites(closeOrNot)
 	IniWrite(wtsDefaultName.Value, settingsFile, "MainSettings", "defaultName")
 		;======= Tab 8 Tips ==============================
 	; No settings to save for tab 8...
-
+	
 	; Reload WayText in RAM (and press hotkey, when appropriate.)
-	Run A_ScriptDir "\WayText.exe"
-
-	If WinActive("WayText Application") and closeOrNot = "Apply"
-	{	While not processExist("WayText.exe")
+	
+	If WinExist("WayText Application") and closeOrNot = "Apply"
+	{	Run A_ScriptDir "\WayText.exe"
+		While not processExist("WayText.exe")
 			Sleep 50 ; Wait for it to be running again before trying the hotkey. 
-		sleep 800 ; Wait more, just to be safe.
+			sleep 700 ; Wait more, just to be safe.
 		Send '"' varHotKey '"'
 	}
-	wts.Destroy() ; Destroy settings form.
-	
+	else
+	{	Run A_ScriptDir "\WayText.exe"
+		wts.Destroy() ; Destroy settings form.
+	}	
 }
