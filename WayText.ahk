@@ -1,4 +1,4 @@
-﻿#SingleInstance Force
+#SingleInstance Force
 SetWorkingDir(A_ScriptDir)
 SetTitleMatchMode("RegEx")
 #Requires AutoHotkey v2.0
@@ -263,7 +263,7 @@ startHere(*)
 	wt.BackColor := varColorCode ; Update color of main GUI.
 	
 	WinGetPos(&X, &Y, &W, &H, "A")   ; "A" to get the active window's pos.
-	If ThisWinTitle = "WayText Settings" {
+	If ThisWinTitle = "wtSettings" {
 		Global Xpos := X - 508 ; Position wt next to settings gui. 
 		Global Ypos := Y
 	}
