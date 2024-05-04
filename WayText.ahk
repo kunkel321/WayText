@@ -4,7 +4,7 @@ SetTitleMatchMode("RegEx")
 #Requires AutoHotkey v2.0
 Persistent
 ;===============================================================================
-; This is the WayText application code. By Kunkel321 5-2-2024					
+; This is the WayText application code. By Kunkel321 5-4-2024					
 ; Optimized for web-entry of third person narratives.
 ; Uses ini files in an unorthodox way, as quasi databases.
 ; The script file is not a "stand alone" tool -- the folder and ini files are needed. 
@@ -13,7 +13,7 @@ Persistent
 ;===============================================================================
 
 ; ^esc::ExitApp ; <--- Ctrl+Esc is emergency kill switch, when debugging.
-TraySetIcon("shell32.dll","81")   ; I believe this is the old Windows "disc defrag" icon.
+TraySetIcon("shell32.dll","81")   ; The old Windows "disc defrag" icon.
 
 settingsFile := "wtFiles\Settings.ini" ; Don't change.
 If not FileExist(settingsFile) {
@@ -44,12 +44,12 @@ goToSection(*)
 		; -----------------------------------------------
 		;Next steps are for Steve's custom keyboard shortcuts in EditPad Pro...  The ini Sections are 
 		;individually manually folded, so fold them all, then unfold the one I want to see. 
-		;Sleep 200 
-		;SendInput "!^{F3}" ; custom changed from ctrl+F3.   <---- Only for Steve's setup in EditPadPro
-		;Sleep 100
-		;SendInput "^+{F8}" ; custom assigned to Fold All.   <---- Only for Steve's setup in EditPadPro
-		;Sleep 100
-		;SendInput "!^+{F8}" ; custom assigned to Unfold.   <---- Only for Steve's setup in EditPadPro
+		Sleep 200 
+		SendInput "!^{F3}" ; custom changed from ctrl+F3.   <---- Only for Steve's setup in EditPadPro
+		Sleep 100
+		SendInput "^+{F8}" ; custom assigned to Fold All.   <---- Only for Steve's setup in EditPadPro
+		Sleep 100
+		SendInput "!^+{F8}" ; custom assigned to Unfold.   <---- Only for Steve's setup in EditPadPro
 		; -----------------------------------------------
 	}
 	If ErrorLevel {
@@ -114,8 +114,8 @@ wayTxSubMenu.SetColor(menuBackColor)
 
 wayTxMenu.Add(hkVerbose, wtTips)
 wayTxMenu.SetIcon(hkVerbose, "icons/wtSubMenu8.ico")
-wayTxMenu.Add("Reload Script", (*) => Reload())
-wayTxMenu.SetIcon("Reload Script", "icons/reload.ico")
+wayTxMenu.Add("Restart WayText", (*) => Reload())
+wayTxMenu.SetIcon("Restart WayText", "icons/reload.ico")
 
 myTabs := ["Activation","Send Mode","Editor","Targets","Colors","Schedule","Pre-Fill","Tips"]
 ; myTabs array must match the one in wtSettings.ahk file.
@@ -416,35 +416,44 @@ CallMiniForm(theKey:="", theList:="")
 	Return  MyOptions
 	
 	mfButtOK(*)
-	{	Selected := 0, period := ""
+	{	Selected := 0, subSelected := 0, period := ""
 		if mfPuntuate = 1 {
-			for Item in mfArr
+			for Item in mfArr {
+				;MsgBox 'loop ' A_Index '`nnumber of items ' mfArr.Length '`n' Item.Text ' is ' Item.Value '`n`nselected: ' Selected
 				If Item.Value = 1 {
 					if SubStr(Item.text, -1) = '.' ; Do the items have periods? 
 						period := "."
 					Selected++ ; Count how many selected items.
 				}
-				If Selected > 2	{ ; 3 or more, so use Oxford comma.
-					for Item in mfArr {
-						If Item.Value = 1
-							If Selected > A_Index
-								myOptions .= ", " Item.Text 
-							Else
-								myOptions .= ", and " Item.Text
-					} 
-					myOptions := SubStr(myOptions, 3)
-					myOptions := StrReplace(myOptions, ".", "") . period ; Remove all the periods, but put one back at the end. 
-				}
-				Else If Selected = 2	{ ; just use 'and'
-					for Item in mfArr {
-						If Item.Value = 1 {
-							If Selected > A_Index
-								myOptions := Item.Text 
-							Else
-								myOptions .= " and " Item.Text
-						} 
+			}
+			If Selected > 2	{ ; 3 or more, so use Oxford comma.
+				for Item in mfArr {
+					If Item.Value = 1 ; If checkbox is checked.
+					{	subSelected++
+						If subSelected = 1
+							myOptions .= Item.Text ; First checked item.
+						Else If subSelected > 1 and subSelected < Selected						
+							myOptions .= ", " Item.Text ; Middle checked item(s).
+						Else
+							myOptions .= ", and " Item.Text ; Last checked item. 
 					}
-					myOptions := StrReplace(myOptions, ".", "") . period
+					Else ; Not a checked item, so...
+						Continue
+				} 
+				myOptions := StrReplace(myOptions, ".", "") . period ; Remove all the periods, but put one back at the end when appropriate. 
+			}
+			Else If Selected = 2	{ ; just use 'and'
+				for Item in mfArr {
+					If Item.Value = 1 {
+						subSelected++
+						If Selected > subSelected ; don't use a_index.  compare sel with 'thisSel++'
+							myOptions := Item.Text 
+						Else
+							myOptions .= " and " Item.Text
+						;MsgBox 'if sel=2`nSel ' Selected '`nloop ' A_Index '`n' MyOptions
+					} 
+				}
+			myOptions := StrReplace(myOptions, ".", "") . period
 			}
 			Else ; Only one item selected. 
 				for Item in mfArr
