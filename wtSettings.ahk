@@ -1,17 +1,17 @@
 #SingleInstance Force
 #Requires AutoHotkey v2+
 ;===============================================================================
-; This is the wtSettings code.	By Kunkel321 5-2-2024							
+; This is the wtSettings code.	By Kunkel321 5-5-2024							
 ; These are the settings for the WayText application. 				
 ; The script file is not a "stand alone" tool -- the folder and ini files are needed. 
 ; Setting values are added via this Gui, then saved to the ini, then read by WayText.
 ;===============================================================================
 
-TraySetIcon("shell32.dll","81")   ; I think this is the old "disc defrag" icon?
+TraySetIcon("shell32.dll","81")   ; The old "disc defrag" icon.
 
 settingsFile := "wtFiles\Settings.ini"
 If not FileExist(settingsFile) 
-{	Msgbox "We must exit because the 'Settings.ini' file was not found at location:`n`n" A_ScriptDir settingsFile, "WAYTEXT SETTINGS", 48
+{	Msgbox "We must exit because the 'Settings.ini' file was not found at location:`n`n" A_ScriptDir settingsFile,, 48
 	ExitApp
 }
 
@@ -29,7 +29,6 @@ varFontColor := IniRead(settingsFile, "MainSettings", "FontColor")
 varListColor := IniRead(settingsFile, "MainSettings", "ListColor")
 varWColor := IniRead(settingsFile, "MainSettings", "GUIwarnColor")
 varDefaultMenuColor := IniRead(settingsFile, "MainSettings", "MenuColorIsDefault", "1")
-varDebug := IniRead(settingsFile, "MainSettings", "Debug")
 varLastTab := IniRead(settingsFile, "MainSettings", "LastTab")
 varMon := IniRead(settingsFile, "schedule", "Monday")
 varTue := IniRead(settingsFile, "schedule", "Tuesday")
@@ -55,7 +54,7 @@ varWColorCode := subStr(varWColor, -6)
 ;======Launched from WayText app?=========================
 Try WinGetPos(&wtsX, &wtsY, &wtsW, &wtsH, "A")   	; "A" to get the active window's position.
 If isSet(wtsW) 
-{	if WinActive("WayText")
+{	if WinActive("WayText Application")
 	{	;msgbox 'wts active'
 		wtsX := wtsX + wtsW ;If launched from WT form, open right next to it.
 	}
@@ -423,5 +422,6 @@ IniWrites(closeOrNot)
 	else
 	{	Run A_ScriptDir "\WayText.exe"
 		wts.Destroy() ; Destroy settings form.
-	}	
+	}
+	
 }
