@@ -1,7 +1,7 @@
 #SingleInstance Force
 #Requires AutoHotkey v2+
 ;===============================================================================
-; This is the wtSettings code.	By Kunkel321 5-5-2024							
+; This is the wtSettings code.	By Kunkel321 5-28-2024							
 ; These are the settings for the WayText application. 				
 ; The script file is not a "stand alone" tool -- the folder and ini files are needed. 
 ; Setting values are added via this Gui, then saved to the ini, then read by WayText.
@@ -88,8 +88,14 @@ Tab := wts.Add("Tab3", "AltSubmit vCurrTab Choose" . varLastTab, myTabs)
 Tab.UseTab(1) ;######## ACTIVATION #####################################
 
 wts.Add("Text", "Wrap  w340", "The current hotkey is indicated below. Change if desired.")
-wHotkey := wts.Add("Hotkey", , varHotkey)
-wts.Add("Text", "Wrap  w340", "Tip: The Win key (#) modifier cannot be added here.  It can by manually entered into the Settings.ini file, but if you use it, the above box will show `"None`".")
+wHotkey := wts.Add("Hotkey", , strReplace(varHotkey, "#"))
+
+if InStr(varHotKey, "#")
+	winCheck := "Checked"
+else
+	winCheck := ""
+
+WinChkBox := wts.Add("CheckBox", "x+5 " WinCheck, "Use Win Key")
 
 ; start with windows? 
 if FileExist(A_Startup "\WayText.lnk")
@@ -100,7 +106,9 @@ else
 {	StartCheck := ""
 	StartTxt := "Check to start with Windows."
 }
+wts.Add("Text", "Wrap x28 yp+160 w340", "Should the WayText main application start automatically when the computer is started?")
 (StartChkBox := wts.Add("CheckBox", StartCheck, StartTxt)).OnEvent("Click", StartUp)
+; (StartChkBox := wts.Add("CheckBox", "y+104 x28 " StartCheck, StartTxt)).OnEvent("Click", StartUp)
 
 StartUp(*)
 {	If (StartChkBox.Value = 1)
@@ -378,7 +386,8 @@ IniWrites(closeOrNot)
 	; sub menu will override this however. 
 	IniWrite(Tab.Value, settingsFile, "MainSettings", "LastTab")
 		;======= Tab 1 HotKey ===================
-	IniWrite(wHotkey.Value, settingsFile, "MainSettings", "MyHotkey")
+	myFullHotKey := WinChkBox.Value = 1? "#" wHotkey.Value : wHotkey.Value
+	IniWrite(myFullHotkey, settingsFile, "MainSettings", "MyHotkey")
 		;======= Tab 2 Send text mode =====================
 	;VisMode -= 1
 	IniWrite(wtsRadioVisMode.Value, settingsFile, "MainSettings", "VisualSendMode")
