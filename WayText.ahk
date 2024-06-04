@@ -4,7 +4,7 @@ SetTitleMatchMode("RegEx")
 #Requires AutoHotkey v2.0
 Persistent
 ;===============================================================================
-; This is the WayText application code. By Kunkel321 5-4-2024					
+; This is the WayText application code. By Kunkel321 6-4-2024					
 ; Optimized for web-entry of third person narratives.
 ; Uses ini files in an unorthodox way, as quasi databases.
 ; The script file is not a "stand alone" tool -- the folder and ini files are needed. 
@@ -650,16 +650,21 @@ Sending(*)
 			customSleepTime := time[1]
 		If (dotIsOK = 0)
 			item.value := RegExReplace(item.value, "([a-zA-Z])\.([a-zA-Z])", "$1. $2") ; Puts space after period.. 
-		If InStr(item.key, "paste") { ; 'paste must occur in each key name.'
+		If InStr(item.key, "paste") { ; 'paste' must occur in each key name.
 			A_Clipboard := ''
-			A_Clipboard := item.value . " "
+			A_Clipboard := item.value " "
 			; MsgBox 'item.val is:`n' item.value
 			Send "^v" 
 			Sleep(PostPasteDelay)
 			;SoundBeep(1200, 500)
 		}
 		Else 
-		{	Send item.value . " "
+		{	If not (subStr(item.value, -1)="}")
+			{	Send item.value " "
+			}
+			Else
+			{	Send item.value ; Don't want extra space after sending {Tab}
+			}
 		}
 		Sleep customSleepTime ; defined in key name of ini items
 	}
