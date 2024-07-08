@@ -4,7 +4,7 @@ SetTitleMatchMode("RegEx")
 #Requires AutoHotkey v2.0
 Persistent
 ;===============================================================================
-; This is the WayText application code. By Kunkel321 6-4-2024					
+; This is the WayText application code. By Kunkel321 7-8-2024					
 ; Optimized for web-entry of third person narratives.
 ; Uses ini files in an unorthodox way, as quasi databases.
 ; The script file is not a "stand alone" tool -- the folder and ini files are needed. 
@@ -571,7 +571,7 @@ OtherReplacements(EntryArr)
 				;is changed to "They need help."  Works well, but is not perfect.  
 					tempVal := RegExReplace(tempVal, "s)((T|t)hey\s\w*)ies\b", "$1y")
 					tempVal := RegExReplace(tempVal, "s)((T|t)hey\s\w*ly\s\w*(s|z|sh|ch|x|o))es\b", "$1")
-					tempVal := RegExReplace(tempVal, "s)((T|t)hey\s\w*(s|z|sh|ch|x|o))es\b", "$1")
+					tempVal := RegExReplace(tempVal, "s)((T|t)hey\s\w*(s|z|sh|ch|x|o))es\b", "$1$3") ; Must use $3 so last 's' not dropped.  
 					tempVal := RegExReplace(tempVal, "s)((T|t)hey\s\w*ly\s\w*)s\b", "$1")
 					segment := RegExReplace(tempVal, "s)((T|t)hey\s\w*)s\b", "$1")
 					Return segment
