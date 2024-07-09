@@ -4,12 +4,15 @@ SetTitleMatchMode("RegEx")
 #Requires AutoHotkey v2.0
 Persistent
 ;===============================================================================
-; This is the WayText application code. By Kunkel321 7-8-2024					
+; This is the WayText application code. By Kunkel321. Updated: 7-9-2024	
+; New versions on GitHub: https://github.com/kunkel321/WayText
+; On AutoHotkey forum: https://www.autohotkey.com/boards/viewtopic.php?f=83&t=129466			
 ; Optimized for web-entry of third person narratives.
 ; Uses ini files in an unorthodox way, as quasi databases.
 ; The script file is not a "stand alone" tool -- the folder and ini files are needed. 
 ; There are not many user options in the code... They are mostly in the Settings.ini file.
 ; The WayText application (this), should be used in conjunction with the wtSettings script.
+; At the bottom is the InputBuffer Class by Descolada.  See bottom for information.
 ;===============================================================================
 
 ; ^esc::ExitApp ; <--- Ctrl+Esc is emergency kill switch, when debugging.
@@ -569,11 +572,12 @@ OtherReplacements(EntryArr)
 				;-----EXPERIMENTAL! will the RegExes below cause grammar mistakes? They are intended to look for
 				;plural words that follow "they" and make them singular.  For example "They needs help"
 				;is changed to "They need help."  Works well, but is not perfect.  
-					tempVal := RegExReplace(tempVal, "s)((T|t)hey\s\w*)ies\b", "$1y")
-					tempVal := RegExReplace(tempVal, "s)((T|t)hey\s\w*ly\s\w*(s|z|sh|ch|x|o))es\b", "$1")
-					tempVal := RegExReplace(tempVal, "s)((T|t)hey\s\w*(s|z|sh|ch|x|o))es\b", "$1$3") ; Must use $3 so last 's' not dropped.  
-					tempVal := RegExReplace(tempVal, "s)((T|t)hey\s\w*ly\s\w*)s\b", "$1")
-					segment := RegExReplace(tempVal, "s)((T|t)hey\s\w*)s\b", "$1")
+					tempVal := RegExReplace(tempVal, "s)((T|t)hey\s\w*)ies\b", "$1y") ; 'he parties --> they party'
+					tempVal := RegExReplace(tempVal, "s)((T|t)hey\s\w*ly\s\w*(s|z|sh|ch|x|o))es\b", "$1")  ; 'he really parties --> they really party'
+					tempVal := RegExReplace(tempVal, "s)((T|t)hey\s\w*(s))es\b", "$1$3") ; Prevents dropping 's' e.g. 'they surpass.'
+					tempVal := RegExReplace(tempVal, "s)((T|t)hey\s\w*(z|sh|ch|x|o))es\b", "$1") ; 'he watches --> they watch'
+					tempVal := RegExReplace(tempVal, "s)((T|t)hey\s\w*ly\s\w*)s\b", "$1") ; 'he really runs --> they really run'
+					segment := RegExReplace(tempVal, "s)((T|t)hey\s\w*)s\b", "$1") ; 'he runs --> they run'
 					Return segment
 				}
 			}
